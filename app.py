@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from transformers import pipeline
 from pydantic import BaseModel
+from mangum import Mangum
 
 app = FastAPI()
 
@@ -18,4 +19,5 @@ def run_model(request_body: RequestBody):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Run the server using a command like `uvicorn script_name:app --reload`
+# Mangum handler
+handler = Mangum(app)
