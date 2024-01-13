@@ -1,0 +1,42 @@
+service: fastapi-transformers-service
+
+provider:
+  name: aws
+  runtime: python3.11 # Ensure this is supported by AWS at the time of deployment
+  region: us-east-1 # Choose the region that's best for you
+  stage: dev # You can define different stages like dev, prod, etc.
+  memorySize: 1024 # Adjust the memory size as per your function's need
+  timeout: 30 # Set the timeout value (in seconds)
+  environment: # Environment variables can be set here
+    MODEL_NAME: "bert-base-uncased" # Example variable, replace with actual if needed
+
+functions:
+  runModel:
+    handler: handler.handler
+    events:
+      - httpApi:
+          path: /run_model
+          method: post
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true # Use Docker to install requirements, helps with binary packages
+    slim: true # Slims down the package size
+    strip: false # Prevent stripping of binaries to ensure compatibility
+    noDeploy: # List packages that are not necessary to deploy here
+      - boto3
+      - botocore
+      - docutils
+      - jmespath
+      - pip
+      - python-dateutil
+      - s3transfer
+      - setuptools
+      - six
+      - tensorboard
+      - torch
+      - torchvision
+      - tqdm

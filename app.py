@@ -1,23 +1,27 @@
 from fastapi import FastAPI, HTTPException
 from transformers import pipeline
 from pydantic import BaseModel
-from mangum import Mangum
+import os
 
 app = FastAPI()
 
+# Retrieve the model and task names from the environment variables
+model_name = os.getenv("MODEL_NAME", "bert-base-uncased") # Default if not set
+task_name = os.getenv("TASK_NAME", "text-generation") # Default if not set
+
 class RequestBody(BaseModel):
-    task: str
-    model_name: str
     text: str
 
 @app.post("/run_model")
 def run_model(request_body: RequestBody):
     try:
-        pipe = pipeline(request_body.task, model=request_body.model_name)
+        # Initialize the pipeline with the model and task
+        pipe = pipeline(task_name, model=model_name)
         result = pipe(request_body.text)
         return {"result": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Mangum handler
-handler = Mangum(app)
+@app.get("/")
+def read_root():
+    return {"Hello": "from FastAPI", "model": model_name, "task": task_name}

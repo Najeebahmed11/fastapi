@@ -1,17 +1,26 @@
 # Use an official Python runtime as a parent image
-FROM python:3.10-slim
+FROM python:3.8
 
-# Set the working directory in the container to /app
-WORKDIR /app
+# Set environment variable for the model and task
+ARG MODEL_NAME
+ENV MODEL_NAME=${MODEL_NAME}
+ARG TASK_NAME
+ENV TASK_NAME=${TASK_NAME}
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy the current directory contents into the container at /usr/src/app
+COPY . .
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
 # Define environment variable
-ENV PORT=8000
+ENV NAME World
 
 # Run app.py when the container launches
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
