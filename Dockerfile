@@ -18,7 +18,7 @@ WORKDIR /usr/src/app
 RUN echo "Working directory set to /usr/src/app"
 
 # Copy the current directory contents into the container at /usr/src/app
-COPY . .
+COPY ./app .
 
 # Echo after copying files
 RUN echo "Copied project files to /usr/src/app"
